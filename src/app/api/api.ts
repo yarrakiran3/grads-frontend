@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
 import { ApiError } from '../model/authmodel';
 import { tokenStorageUtils } from "@/app/utils/tokenstorage";
-import { Course, Enrollment, Video, VideoProgress } from '../model/course';
+import { ApiResponse, Course, Enrollment, Video, VideoProgress } from '../model/course';
 
 // API Configuration
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
@@ -34,13 +34,14 @@ apiClient.interceptors.request.use(
 // Response interceptor - Handle responses and errors
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => {
-    console.log('API Response:', response);
+    // console.log('API Response:', response);
     return response;
   },
   (error: AxiosError) => {
     const apiError: ApiError = {
       message: 'An unexpected error occurred',
       status: error.response?.status || 500,
+      response: error.response?.data
     };
 
     // console.error('API Error:', apiError, error);
@@ -65,14 +66,12 @@ apiClient.interceptors.response.use(
       apiError.message = 'Access denied. Insufficient permissions.';
     } else if (error.response?.status === 404) {
       apiError.message = 'Resource not found.';
-    } else if (error.response?.status === 422) {
-      apiError.message = 'Validation failed. Please check your input.';
-    }
-      // } else if (error.response?.status >= 500) {
-    //   apiError.message = 'Server error. Please try again later.';
-    // } else if (error.response?.data?.message) {
-    //   apiError.message = error.response.data.message;
-    // }
+    } else if (error.response?.status === 423) {
+      apiError.message = 'Invalid password';
+    }  
+    // else if (error.response?.status === 422) {
+    //   apiError.message = 'Validation failed. Please check your input.';
+    // } 
 
     return Promise.reject({
       ...apiError,
@@ -110,19 +109,19 @@ export const apiUtils = {
   },
 };
 
-// Export the configured axios instance for direct use if needed
-export { apiClient };
 
 // Course API functions
 export const courseAPI = {
   // Fetch all courses
-  getAllCourses: ():Promise<Course[]> => apiUtils.get('/courses'),
+  getAllCourses: ():Promise<ApiResponse<Course[]>>=> apiUtils.get('/course/all'),
   
   // Fetch course by ID
-  getCourseById: (id:number):Promise<Course> => apiUtils.get(`/courses/${id}`),
+  getCourseById: (id:number):Promise<ApiResponse<Course>> => apiUtils.get(`/course/id/${id}`),
+  // Fetch course by User
+  getCourseByUser: (email:string):Promise<ApiResponse<Course[]>> => apiUtils.get(`/course/user`),
   
   // Fetch course videos
-  getCourseVideos: (courseId:number):Promise<Video[]> => apiUtils.get(`/courses/${courseId}/videos`),
+  getCourseVideos: (courseId:number):Promise<ApiResponse<Video[]>> => apiUtils.get(`/videos/course/${courseId}`),
   
   // Enroll in course
   enrollInCourse: (courseId:number):Promise<Enrollment> => 
@@ -132,7 +131,7 @@ export const courseAPI = {
   checkEnrollment: (courseId:number): Promise<{ enrolled: boolean }> => apiUtils.get(`/courses/${courseId}/enrollment`),
   
   // Get user enrollments
-  getUserEnrollments: (): Promise<Enrollment[]>  => apiUtils.get('/enrollments'),
+  getUserEnrollments: (): Promise<ApiResponse<Enrollment[]>>  => apiUtils.get(`/enrollments/my`),
   
   // Update video progress
   updateProgress: (courseId:number, videoId:number, progress:any):Promise<VideoProgress> =>
@@ -145,11 +144,7 @@ export const userAPI = {
 };
 
 
-// Export default
-export default {
-  
-  utils: apiUtils,
-  client: apiClient,
-};
 
 
+
+export default apiClient;

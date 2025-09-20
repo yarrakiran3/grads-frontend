@@ -24,11 +24,11 @@ interface LoginFormProps {
 export const LoginForm: React.FC<LoginFormProps> = (
     { 
   onSuccess, 
-  redirectTo = '/home' 
+  redirectTo = '/' 
 }) => 
     {
   const [showPassword, setShowPassword] = useState(false);
-  const { login, isLoading, error, clearError } = useAuth();
+  const { login, isLoading,error, clearError,updateError} = useAuth();
   const router = useRouter();
 
   const {
@@ -57,13 +57,15 @@ export const LoginForm: React.FC<LoginFormProps> = (
         // toast.success("Account Loggedin successfully!");
         router.push(redirectTo);
       }
-    } catch (error: any) {
+    } catch (e: any) {
       console.log("Error from login from")
-      console.log(error)
+      console.log(e)
+      
+      updateError(e.status,e.message);
       // Handle specific validation errors from backend
-      if (error.status === 421) {
+      if (e.status === 421) {
         setError('email', { message: 'Invalid email' });
-      } else if (error.status === 422) {
+      } else if (e.status === 423) {
         setError('password', { message: 'Invalid password' });
       }
       // General error is handled by AuthContext

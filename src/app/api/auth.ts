@@ -1,6 +1,6 @@
 import axios from "axios";
 import { User } from "../model/auth";
-import { apiClient } from "./api";
+import apiClient from "./api";
 import { AuthResponse, LoginRequest, RegisterRequest } from "../model/authmodel";
 import { tokenStorageUtils } from "@/app/utils/tokenstorage";
 

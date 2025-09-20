@@ -21,4 +21,5 @@ export interface AuthResponse {
 export interface ApiError {
   message: string;
   status: number;
+  response:any;
 }

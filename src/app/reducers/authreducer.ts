@@ -6,11 +6,12 @@ import { AuthState, User } from "../model/auth";
 export type AuthAction =
    { type: 'AUTH_START' }
   | { type: 'AUTH_SUCCESS'; payload: { user: User; token: string } }
-  | { type: 'AUTH_FAILURE'; payload: string }
+  | { type: 'AUTH_FAILURE'; payload: {status:number; message:string} }
   | { type: 'AUTH_LOGOUT' }
   | { type: 'UPDATE_USER'; payload: Partial<User> }
   | { type: 'CLEAR_ERROR' }
-  | { type: 'SET_LOADING'; payload: boolean };
+  | { type: 'SET_LOADING'; payload: boolean }
+  | { type: 'UPDATE_ERROR'; payload: {status:number; message:string} }
 
 
 
@@ -21,7 +22,10 @@ export const authReducer = (state: AuthState, action: AuthAction): AuthState => 
       return {
         ...state,
         isLoading: true,
-        error: null,
+        error: {
+    status: 0,
+    message: ''
+  },
       };
     
     case 'AUTH_SUCCESS':
@@ -31,7 +35,10 @@ export const authReducer = (state: AuthState, action: AuthAction): AuthState => 
         isAuthenticated: true,
         user: action.payload.user,
         token: action.payload.token,
-        error: null,
+        error: {
+    status: 0,
+    message: ''
+  },
       };
     
     case 'AUTH_FAILURE':
@@ -41,7 +48,10 @@ export const authReducer = (state: AuthState, action: AuthAction): AuthState => 
         isAuthenticated: false,
         user: null,
         token: null,
-        error: action.payload,
+        error: {
+    status: action.payload.status,
+    message: action.payload. message
+        },
       };
     
     case 'AUTH_LOGOUT':
@@ -50,7 +60,10 @@ export const authReducer = (state: AuthState, action: AuthAction): AuthState => 
         isAuthenticated: false,
         user: null,
         token: null,
-        error: null,
+        error:  {
+    status: 0,
+    message: ''
+        },
       };
     
     case 'UPDATE_USER':
@@ -62,13 +75,22 @@ export const authReducer = (state: AuthState, action: AuthAction): AuthState => 
     case 'CLEAR_ERROR':
       return {
         ...state,
-        error: null,
+        error: {
+    status: 0,
+    message: ''
+        },
       };
     
     case 'SET_LOADING':
       return {
         ...state,
         isLoading: action.payload,
+      };
+
+    case 'UPDATE_ERROR':
+      return {
+        ...state,
+        error: action.payload,
       };
     
     default:

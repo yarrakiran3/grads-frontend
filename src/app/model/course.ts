@@ -25,12 +25,16 @@ export interface Enrollment {
   userId: number;
   courseId: number;
   enrolledAt: string;
+  isPremium:boolean;
+  courseTitle:string;
+  courseDescription:string;
+  coursePrice:number;
 }
 // API Response types
 export interface ApiResponse<T> {
   data: T;
   message?: string;
-  status: string;
+  success: boolean;
 }
 
 // Progress tracking

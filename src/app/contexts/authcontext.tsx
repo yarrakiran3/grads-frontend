@@ -15,6 +15,8 @@ export interface AuthContextValue extends AuthState {
   register: (email: string, password: string, firstName: string, lastName:string) => Promise<void>;
   updateUser: (userData: User) => void;
   clearError: () => void;
+  updateError :(status:number,message:string)=>void;
+  
   isHydrated: boolean;
 }
 
@@ -98,7 +100,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }>
     } catch (error:any) {
       console.log("Error form auth context",error)
       const errorMessage = error ? error.message : 'Login failed';
-      dispatch({ type: 'AUTH_FAILURE', payload: errorMessage });
+      dispatch({ type: 'AUTH_FAILURE', payload: {status:error.status, message:error.message} });
       throw error;
     }
   };
@@ -120,11 +122,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }>
       tokenStorageUtils.setUser(user);
       dispatch({ type: 'AUTH_SUCCESS', payload: { user, token } });
 
-    } catch (error) {
+    } catch (error:any) {
       
       console.error('Registration error:', error);
       const errorMessage = error instanceof Error ? error.message : 'Registration failed';
-      // dispatch({ type: 'AUTH_FAILURE', payload: errorMessage });
+      dispatch({ type: 'AUTH_FAILURE', payload: {status:error.status, message:error.message} });
       throw error;
     }
   };
@@ -162,6 +164,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }>
     dispatch({ type: 'CLEAR_ERROR' });
   };
 
+  // Clear error function
+  const updateError = (status:number,message:string): void => {
+    dispatch({ type: 'UPDATE_ERROR' ,payload:{status,message}});
+  };
+
   const contextValue: AuthContextValue = {
     ...state,
     login,
@@ -169,6 +176,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }>
     register,
     updateUser,
     clearError,
+    updateError,
     isHydrated: isHydrated
   };
 

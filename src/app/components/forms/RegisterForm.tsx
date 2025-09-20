@@ -21,7 +21,7 @@ interface RegisterFormProps {
 
 export const RegisterForm: React.FC<RegisterFormProps> = ({ 
   onSuccess, 
-  redirectTo = '/home' 
+  redirectTo = '/' 
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -88,7 +88,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 
         {error && (
           <Alert variant="destructive" className="mb-6" dismissible onDismiss={clearError}>
-            {error}
+            {error.status}
           </Alert>
         )}
 
