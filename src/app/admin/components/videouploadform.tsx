@@ -3,8 +3,10 @@
 
 import { useState, FormEvent } from 'react'
 import { Upload, X, FileVideo, Loader2 } from 'lucide-react'
-import { apiClient, apiUtils } from '@/app/api/api'
+import api from '@/app/api/api'
 import { set } from 'zod'
+
+import apiClient from '@/app/api/api'
 
 interface VideoUploadFormProps {
   courseId: number
