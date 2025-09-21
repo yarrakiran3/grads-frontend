@@ -38,7 +38,16 @@ const AuthTest: React.FC = () => {
   };
 
   const handleUpdateUser = () => {
-    updateUser({ firstname: firstName, lastname: lastName });
+    updateUser({
+      firstname:firstName || user?.firstname || '',
+      lastname:lastName || user?.lastname || '',
+      email: user?.email || '',
+      role: user?.role || 'user'
+     
+
+    }
+
+    );
   };
 
   
@@ -67,7 +76,7 @@ const AuthTest: React.FC = () => {
 
         <p><strong>Token:</strong> {token ? 'Present' : 'None'}</p>
         <p><strong>Loading:</strong> {isLoading ? 'Yes' : 'No'}</p>
-        {error && <p className="text-red-600"><strong>Error:</strong> {error}</p>}
+        {error && <p className="text-red-600"><strong>Error:</strong> {error.message}</p>}
       </div>
 
       {/* Test Buttons */}
@@ -166,7 +175,7 @@ const AuthTest: React.FC = () => {
       
       {error && (
         <div className="mt-4 p-4 bg-red-100 text-red-700 rounded">
-          <p>{error}</p>
+          <p>{error.message}</p>
           <button
             onClick={clearError}
             className="mt-2 bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600"
