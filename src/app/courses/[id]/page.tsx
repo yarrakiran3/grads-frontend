@@ -10,7 +10,7 @@ export async function generateStaticParams() {
 
 
 export default async function CourseDetailPage  ({params}:{params:{id:string}})  {
-  const { id } = await params;
+  const { id } =  params;
   const response = await courseAPI.getCourseById(Number(id));
   
   if(!response?.data){
