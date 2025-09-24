@@ -23,8 +23,8 @@ export const authAPI = {
               tokenStorageUtils.clearAll();
             }
           throw {
-            status: err.original.response.status,
-            message: err.original.response.data || "Something went wrong",
+            status: err.status,
+            message: err.message || "Something went wrong",
           };
           }
         throw { status: 500, message: "Unknown error" };
